@@ -9,13 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const panneauAjoutTache = document.getElementById("new-item");
   
     let tacheEnEdition = null;
+
+    const create = () => {
+        const titre = champNouvelleTache.value.trim();
+        if (titre) {
+          ajouterTache(titre);
+          champNouvelleTache.value = "";
+        }
+      };
   
-    boutonAjouterTache.addEventListener("click", () => {
-      const titre = champNouvelleTache.value.trim();
-      if (titre) {
-        ajouterTache(titre);
-        champNouvelleTache.value = "";
-      }
+    boutonAjouterTache.addEventListener("click", create); // pas de paranthese sinon execution directe
+
+    champNouvelleTache.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') create();
     });
   
     function ajouterTache(titre) {
@@ -45,12 +51,18 @@ document.addEventListener("DOMContentLoaded", () => {
       panneauEdition.hidden = false;
       panneauAjoutTache.hidden = true;  // Masquer le panneau d'ajout de tâche
     }
-  
-    boutonConfirmerEdition.addEventListener("click", () => {
+    
+    const confirmEdit = () => {
       if (tacheEnEdition) {
-        tacheEnEdition.querySelector("span").textContent = champEdition.value.trim();
+        tacheEnEdition.querySelector("span").textContent = champEdition.value.trim(); // query optionnel, peut etre evite
         desactiverModeEdition();
       }
+    }
+
+    boutonConfirmerEdition.addEventListener("click", confirmEdit);
+
+    champEdition.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') confirmEdit();
     });
   
     boutonAnnulerEdition.addEventListener("click", desactiverModeEdition);
@@ -61,4 +73,3 @@ document.addEventListener("DOMContentLoaded", () => {
       tacheEnEdition = null;
     }
   });
-  
