@@ -1,63 +1,64 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const todoList = document.getElementById("todo-list");
-  const newTodoInput = document.getElementById("new-todo-item-title");
-  const newTodoAddButton = document.getElementById("new-todo-item-add");
-  const editPanel = document.getElementById("edit-item");
-  const editInput = document.getElementById("edit-todo-item-title");
-  const confirmEditButton = document.getElementById("edit-todo-item-confirm");
-  const cancelEditButton = document.getElementById("edit-todo-item-cancel");
-  const newItemPanel = document.getElementById("new-item");
-
-  let currentEditItem = null;
-
-  newTodoAddButton.addEventListener("click", () => {
-    const title = newTodoInput.value.trim();
-    if (title) {
-      addTodoItem(title);
-      newTodoInput.value = "";
+    const listeDeTaches = document.getElementById("todo-list");
+    const champNouvelleTache = document.getElementById("new-todo-item-title");
+    const boutonAjouterTache = document.getElementById("new-todo-item-add");
+    const panneauEdition = document.getElementById("edit-item");
+    const champEdition = document.getElementById("edit-todo-item-title");
+    const boutonConfirmerEdition = document.getElementById("edit-todo-item-confirm");
+    const boutonAnnulerEdition = document.getElementById("edit-todo-item-cancel");
+    const panneauAjoutTache = document.getElementById("new-item");
+  
+    let tacheEnEdition = null;
+  
+    boutonAjouterTache.addEventListener("click", () => {
+      const titre = champNouvelleTache.value.trim();
+      if (titre) {
+        ajouterTache(titre);
+        champNouvelleTache.value = "";
+      }
+    });
+  
+    function ajouterTache(titre) {
+      const elementListe = document.createElement("li");
+      const spanTexte = document.createElement("span");
+      spanTexte.textContent = titre;
+      elementListe.appendChild(spanTexte);
+  
+      const boutonModifier = creerBouton("Edit", () => activerModeEdition(elementListe, spanTexte.textContent));
+      const boutonSupprimer = creerBouton("Delete", () => elementListe.remove());
+  
+      elementListe.appendChild(boutonModifier);
+      elementListe.appendChild(boutonSupprimer);
+      listeDeTaches.appendChild(elementListe);
+    }
+  
+    function creerBouton(texte, onClick) {
+      const bouton = document.createElement("button");
+      bouton.textContent = texte;
+      bouton.addEventListener("click", onClick);
+      return bouton;
+    }
+  
+    function activerModeEdition(element, texteActuel) {
+      tacheEnEdition = element;
+      champEdition.value = texteActuel;
+      panneauEdition.hidden = false;
+      panneauAjoutTache.hidden = true;  // Masquer le panneau d'ajout de tâche
+    }
+  
+    boutonConfirmerEdition.addEventListener("click", () => {
+      if (tacheEnEdition) {
+        tacheEnEdition.querySelector("span").textContent = champEdition.value.trim();
+        desactiverModeEdition();
+      }
+    });
+  
+    boutonAnnulerEdition.addEventListener("click", desactiverModeEdition);
+  
+    function desactiverModeEdition() {
+      panneauEdition.hidden = true;
+      panneauAjoutTache.hidden = false;  // Afficher de nouveau le panneau d'ajout de tâche
+      tacheEnEdition = null;
     }
   });
-
-  function addTodoItem(title) {
-    const listItem = document.createElement("li");
-    const textSpan = document.createElement("span");
-    textSpan.textContent = title;
-    listItem.appendChild(textSpan);
-
-    const editButton = createButton("Edit", () => activateEditMode(listItem, textSpan.textContent));
-    const deleteButton = createButton("Delete", () => listItem.remove());
-
-    listItem.appendChild(editButton);
-    listItem.appendChild(deleteButton);
-    todoList.appendChild(listItem);
-  }
-
-  function createButton(text, onClick) {
-    const button = document.createElement("button");
-    button.textContent = text;
-    button.addEventListener("click", onClick);
-    return button;
-  }
-
-  function activateEditMode(item, currentText) {
-    currentEditItem = item;
-    editInput.value = currentText;
-    editPanel.hidden = false;
-    newItemPanel.hidden = true;  // Masquer le panneau d'ajout de tâche
-  }
-
-  confirmEditButton.addEventListener("click", () => {
-    if (currentEditItem) {
-      currentEditItem.querySelector("span").textContent = editInput.value.trim();
-      deactivateEditMode();
-    }
-  });
-
-  cancelEditButton.addEventListener("click", deactivateEditMode);
-
-  function deactivateEditMode() {
-    editPanel.hidden = true;
-    newItemPanel.hidden = false;  // Afficher de nouveau le panneau d'ajout de tâche
-    currentEditItem = null;
-  }
-});
+  
